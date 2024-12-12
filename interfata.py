@@ -8,6 +8,7 @@ FUNDAL = (60,60,60)
 FUNDALBULINE = (200,200,200)
 BULINEJUCATOR = (0,255,0)
 BULINECALCULATOR = (255,0,0)
+FUNDALSPATE = (180,180,180)
 
 RANDURI = 8
 COLOANE = 8
@@ -15,15 +16,13 @@ DIMENSIUNEBULINA = 75
 RAZA = int(DIMENSIUNEBULINA/2-10)
 
 width = COLOANE * DIMENSIUNEBULINA
-height = RANDURI * DIMENSIUNEBULINA
+height = (RANDURI + 1) * DIMENSIUNEBULINA
 size = (width,height)
 screen = pygame.display.set_mode(size)
+screen.fill(FUNDALSPATE)
 
 def creareTabla():
     tabla = np.zeros((RANDURI,COLOANE))
-
-def afiseazaTabla(tabla):
-    print(np.flip(tabla,0))
 
 def deseneazaTabla(tabla):
     for coloana in range(COLOANE):
@@ -34,11 +33,15 @@ def deseneazaTabla(tabla):
 
 def main():
     tabla = creareTabla()
-    #afiseazaTabla(tabla)
     pygame.init()
+    pygame.display.set_caption("Connect 4")
     deseneazaTabla(tabla)
     pygame.display.update()
-    pygame.time.wait(50000)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
 if __name__=="__main__":
     main()
