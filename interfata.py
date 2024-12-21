@@ -1,47 +1,29 @@
 import numpy as np
+import random
 import pygame
-import pygame_menu
 import sys
+import math
 
-
-FUNDAL = (60,60,60)
-FUNDALBULINE = (200,200,200)
-BULINEJUCATOR = (0,255,0)
-BULINECALCULATOR = (255,0,0)
-FUNDALSPATE = (180,180,180)
-
+FUNDAL = (60, 60, 60)
+FUNDALBULINE = (200, 200, 200)
+BULINEJUCATOR = (0, 255, 0)
+BULINECALCULATOR = (255, 0, 0)
 
 RANDURI = 8
 COLOANE = 8
 DIMENSIUNEBULINA = 75
 RAZA = int(DIMENSIUNEBULINA / 2 - 10)
 
-DIMENSIUNEBUTON = 35
-
 width = COLOANE * DIMENSIUNEBULINA
-
-height = RANDURI * DIMENSIUNEBULINA + DIMENSIUNEBUTON
-size = (width,height)
-
+height = (RANDURI + 1) * DIMENSIUNEBULINA
+size = (width, height)
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Connect 4")
-screen.fill(FUNDALSPATE)
-
-tabla = None
-pauza =  False
-meniuAfisat = False
-popUpAfisat = False
-
-def creareTabla():
-    return np.zeros((RANDURI,COLOANE)) 
-
-
-
-
+pygame.init()
 
 font = pygame.font.SysFont("monospace", 30)
 
-
+def creareTabla():
+    return np.zeros((RANDURI, COLOANE))
 
 
 def validLocatie(tabla, coloana):
@@ -59,11 +41,9 @@ def puneBulina(tabla, rand, coloana, bulina):
     tabla[rand][coloana] = bulina
 
 
-
 def deseneazaTabla(tabla):
     for coloana in range(COLOANE):
         for rand in range(RANDURI):
-
             pygame.draw.rect(
                 screen,
                 FUNDAL,
@@ -176,154 +156,51 @@ def showWinner(winner):
     popup_surface.blit(label, (label_x, label_y))
 
     screen.blit(popup_surface, (popup_x, popup_y))
-
     pygame.display.update()
     pygame.time.wait(3000)
     sys.exit()
 
 
 
-def startJoc():
-    print("Start joc")
-    global pauza, tabla, meniuAfisat, popUpAfisat
-    pauza = False
-    meniuAfisat = False
-    popUpAfisat = False
-
-def startJocNou():
-    print("Start joc nou")
-    global pauza, tabla, meniuAfisat, popUpAfisat
-    pauza = False
-    tabla = creareTabla()
-    meniuAfisat = False
-    popUpAfisat = False
-
-def despreJoc():
-    print("Despre joc")
-    global popUpAfisat
-    popUpAfisat = True
-
-def iesireJoc():
-    pygame.quit()
-    sys.exit()
-
-def creeaza_meniu():
-    menu = pygame_menu.Menu('Meniu principal', width, height,
-                            theme=pygame_menu.themes.THEME_DEFAULT)
-    menu.add.button('Revenire', startJoc)
-    menu.add.button('Joc Nou', startJocNou)
-    menu.add.button('Despre', despreJoc)
-    menu.add.button('Ieșire', iesireJoc)
-    return menu
-
-def deseneaza_buton_meniu():
-    buton_rect = pygame.Rect(0, 0, 100, DIMENSIUNEBUTON)
-    pygame.draw.rect(screen, FUNDAL, buton_rect)
-    font = pygame.font.Font(None, 36)
-    text = font.render("Meniu", True, (255, 255, 255))
-    screen.blit(text, (buton_rect.x + (buton_rect.width - text.get_width()) // 2, 
-                       buton_rect.y + (buton_rect.height - text.get_height()) // 2))
-    return buton_rect
-
-def deseneaza_popup(mesaj):
-    latime_popup = 500
-    inaltime_popup = 350
-    popup_rect = pygame.Rect((width - latime_popup) // 2, (height - inaltime_popup) // 2, latime_popup, inaltime_popup)
-    pygame.draw.rect(screen, (0, 0, 0), popup_rect)
-    pygame.draw.rect(screen, (255, 255, 255), popup_rect, 5)
-
-    font = pygame.font.Font(None, 36)
-    mesaj_linii = mesaj.split("\n")
-    text_x = popup_rect.x + 20
-    text_y = popup_rect.y + 20
-    for linie in mesaj_linii:
-        text_surface = font.render(linie, True, (255, 255, 255))
-        screen.blit(text_surface, (text_x, text_y))
-        text_y += 40
-
-    buton_ok = pygame.Rect(popup_rect.x + (popup_rect.width - 100) // 2, popup_rect.y + popup_rect.height - 50, 100, 40)
-    pygame.draw.rect(screen, (0, 255, 0), buton_ok)
-    buton_font = pygame.font.Font(None, 30)
-    buton_text = buton_font.render("OK", True, (0, 0, 0))
-    screen.blit(buton_text, (buton_ok.x + (buton_ok.width - buton_text.get_width()) // 2,
-                             buton_ok.y + (buton_ok.height - buton_text.get_height()) // 2))
-
-    return buton_ok
-
 def main():
-    pygame.init()
     tabla = creareTabla()
-    menu = creeaza_meniu()
+    turn = random.randint(0, 1)
 
-    turn = random.randint(0, 1)  # Randomize who starts
+    deseneazaTabla(tabla)
+
     game_over = False
 
-    meniuAfisat = False
-    popUpAfisat = False
-    pauza = False
-
     while not game_over:
-        screen.fill(FUNDALSPATE)
-
-        if popUpAfisat:
-            butonOK = deseneaza_popup(despre)
-        elif meniuAfisat:
-            menu.draw(screen)
-            menu.update(pygame.event.get())
-        else:
-            if not pauza:
-                deseneazaTabla(tabla)
-
-        butonMeniu = deseneaza_buton_meniu()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                iesireJoc()
+                sys.exit()
 
-            if meniuAfisat or popUpAfisat:
-                if popUpAfisat and event.type == pygame.MOUSEBUTTONDOWN:
-                    pozitieMouse = pygame.mouse.get_pos()
-                    if butonOK.collidepoint(pozitieMouse):
-                        popUpAfisat = False
-                        meniuAfisat = True
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    pozitieMouse = pygame.mouse.get_pos()
-                    if butonMeniu.collidepoint(pozitieMouse):
-                        meniuAfisat = False
-                        pauza = False
-            else:
+            if turn == 0:  
+                if event.type == pygame.MOUSEMOTION:
+                    pygame.draw.rect(screen, FUNDAL, (0, 0, width, DIMENSIUNEBULINA))
+                    posx = event.pos[0]
+                    pygame.draw.circle(
+                        screen, BULINEJUCATOR, (posx, int(DIMENSIUNEBULINA / 2)), RAZA
+                    )
+                pygame.display.update()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pozitieMouse = pygame.mouse.get_pos()
-                    if butonMeniu.collidepoint(pozitieMouse):
-                        meniuAfisat = True
-                        pauza = True
+                    pygame.draw.rect(screen, FUNDAL, (0, 0, width, DIMENSIUNEBULINA))
+                    posx = event.pos[0]
+                    coloana = int(math.floor(posx / DIMENSIUNEBULINA))
 
-                if turn == 0 and not pauza:
-                    if event.type == pygame.MOUSEMOTION:
-                        pygame.draw.rect(screen, FUNDAL, (0, 0, width, DIMENSIUNEBULINA))
-                        posx = event.pos[0]
-                        pygame.draw.circle(
-                            screen, BULINEJUCATOR, (posx, int(DIMENSIUNEBULINA / 2)), RAZA
-                        )
-                        pygame.display.update()
+                    if validLocatie(tabla, coloana):
+                        rand = urmRandLiber(tabla, coloana)
+                        puneBulina(tabla, rand, coloana, 1)
 
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pygame.draw.rect(screen, FUNDAL, (0, 0, width, DIMENSIUNEBULINA))
-                        posx = event.pos[0]
-                        coloana = int(math.floor(posx / DIMENSIUNEBULINA))
+                        if checkWin(tabla, 1):
+                            game_over = True
+                            showWinner(1)
 
-                        if validLocatie(tabla, coloana):
-                            rand = urmRandLiber(tabla, coloana)
-                            puneBulina(tabla, rand, coloana, 1)
+                        turn = 1
+                        deseneazaTabla(tabla)
 
-                            if checkWin(tabla, 1):
-                                game_over = True
-                                showWinner(1)
-
-                            turn = 1
-                            deseneazaTabla(tabla)
-
-        if turn == 1 and not game_over and not pauza:
+        if turn == 1 and not game_over:
             pygame.time.wait(500)
             coloana = random.randint(0, COLOANE - 1)
 
@@ -340,7 +217,6 @@ def main():
             turn = 0
             deseneazaTabla(tabla)
 
-        pygame.display.update()
 
 if __name__ == "__main__":
     main()
