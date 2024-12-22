@@ -92,17 +92,99 @@ def showWinner(winner):
     sys.exit()
     return buton_ok
 
-def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
+
+
+def getValidMoves(tabla):
+    return [c for c in range(COLOANE) if validLocatie(tabla, c)]
+
+
+
+def makeMove(tabla, row, col, piece):
+    tabla[row][col] = piece
+
+def undoMove(tabla, row, col):
+    tabla[row][col] = 0
+
+
+
+# def scorePosition(tabla, r, c, dr, dc, piece):
+#     opponent_piece = 3 - piece
+#     count = 0
+#     empty_count = 0
+#     opponent_count = 0
+
+#     for i in range(4):
+#         row, col = r + i * dr, c + i * dc
+#         if 0 <= row < RANDURI and 0 <= col < COLOANE:
+#             if tabla[row][col] == piece:
+#                 count += 1
+#             elif tabla[row][col] == 0:
+#                 empty_count += 1
+#             elif tabla[row][col] == opponent_piece:
+#                 opponent_count += 1
+#         else:
+#             return 0
+
+#     if opponent_count > 0:
+#         return 0
+
+#     if count == 4:
+#         return 100
+#     elif count == 3 and empty_count == 1:
+#         return 10
+#     elif count == 2 and empty_count == 2:
+#         return 5
+
+#     return 0
+
+def aiMove(tabla, depth=4):
+    best_score = -math.inf
+    best_moves = []
+
     valid_moves = getValidMoves(tabla)
+
+    for move in valid_moves:
+        row = urmRandLiber(tabla, move)
+        makeMove(tabla, row, move, 2)
+        if checkWin(tabla, 2):
+            undoMove(tabla, row, move)
+            return move
+        undoMove(tabla, row, move)
+
+    for move in valid_moves:
+        row = urmRandLiber(tabla, move)
+        makeMove(tabla, row, move, 2)
+        score = minimax(tabla, depth, -math.inf, math.inf, False, 2)
+        undoMove(tabla, row, move)
+
+        if score > best_score:
+            best_score = score
+            best_moves = [move]
+        elif score == best_score:
+            best_moves.append(move)
+
+    return random.choice(best_moves)
+
+
+def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
+    opponent_piece = 3 - piece
+    valid_moves = getValidMoves(tabla)
+
+    if checkWin(tabla, piece):
+        return float('inf') if is_maximizing else float('-inf')
+
+    if checkWin(tabla, opponent_piece):
+        return float('-inf') if is_maximizing else float('inf')
+
     if depth == 0 or not valid_moves:
         return evaluate(tabla, piece)
-    
+
     if is_maximizing:
         max_eval = -math.inf
         for move in valid_moves:
             row = urmRandLiber(tabla, move)
             makeMove(tabla, row, move, piece)
-            eval = minimax(tabla, depth-1, alpha, beta, False, piece)
+            eval = minimax(tabla, depth - 1, alpha, beta, False, piece)
             undoMove(tabla, row, move)
             max_eval = max(max_eval, eval)
             alpha = max(alpha, eval)
@@ -113,8 +195,8 @@ def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
         min_eval = math.inf
         for move in valid_moves:
             row = urmRandLiber(tabla, move)
-            makeMove(tabla, row, move, 3 - piece)
-            eval = minimax(tabla, depth-1, alpha, beta, True, piece)
+            makeMove(tabla, row, move, opponent_piece)
+            eval = minimax(tabla, depth - 1, alpha, beta, True, piece)
             undoMove(tabla, row, move)
             min_eval = min(min_eval, eval)
             beta = min(beta, eval)
@@ -122,50 +204,48 @@ def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
                 break
         return min_eval
 
-def getValidMoves(tabla):
-    return [c for c in range(COLOANE) if validLocatie(tabla, c)]
 
 def evaluate(tabla, piece):
     score = 0
+    opponent_piece = 3 - piece
+    center_col = COLOANE // 2
+    center_count = sum([1 for r in range(RANDURI) if tabla[r][center_col] == piece])
+    score += center_count * 3
+
     for r in range(RANDURI):
         for c in range(COLOANE - 3):
-            score += scorePosition(tabla, r, c, 1, 0, piece)
-            score += scorePosition(tabla, r, c, 0, 1, piece)
-            score += scorePosition(tabla, r, c, 1, 1, piece)
-            score += scorePosition(tabla, r, c, 1, -1, piece)
+            window = [tabla[r][c + i] for i in range(4)]
+            score += scoreWindow(window, piece)
+
+    for c in range(COLOANE):
+        for r in range(RANDURI - 3):
+            window = [tabla[r + i][c] for i in range(4)]
+            score += scoreWindow(window, piece)
+
+    for r in range(RANDURI - 3):
+        for c in range(COLOANE - 3):
+            window = [tabla[r + i][c + i] for i in range(4)]
+            score += scoreWindow(window, piece)
+
+        for c in range(COLOANE - 3):
+            window = [tabla[r + 3 - i][c + i] for i in range(4)]
+            score += scoreWindow(window, piece)
+
     return score
 
-def scorePosition(tabla, r, c, dr, dc, piece):
-    count = 0
-    for i in range(4):
-        if r + i*dr < 0 or r + i*dr >= RANDURI or c + i*dc < 0 or c + i*dc >= COLOANE:
-            return 0
-        if tabla[r + i*dr][c + i*dc] == piece:
-            count += 1
-        elif tabla[r + i*dr][c + i*dc] != 0:
-            return 0
-    return count
 
-def makeMove(tabla, row, col, piece):
-    tabla[row][col] = piece
+def scoreWindow(window, piece):
+    opponent_piece = 3 - piece
+    score = 0
 
-def undoMove(tabla, row, col):
-    tabla[row][col] = 0
+    if window.count(piece) == 4:
+        score += 100
+    elif window.count(piece) == 3 and window.count(0) == 1:
+        score += 10
+    elif window.count(piece) == 2 and window.count(0) == 2:
+        score += 5
 
-def aiMove(tabla):
-    best_score = -math.inf
-    best_moves = []
+    if window.count(opponent_piece) == 3 and window.count(0) == 1:
+        score -= 8
 
-    for move in getValidMoves(tabla):
-        row = urmRandLiber(tabla, move)
-        makeMove(tabla, row, move, 2)
-        score = minimax(tabla, 4, -math.inf, math.inf, False, 2)
-        undoMove(tabla, row, move)
-
-        if score > best_score:
-            best_score = score
-            best_moves = [move]
-        elif score == best_score:
-            best_moves.append(move)
-
-    return random.choice(best_moves)
+    return score
