@@ -43,3 +43,5 @@ def deseneaza_popup(mesaj):
     buton_text = buton_font.render("OK", True, (0, 0, 0))
     screen.blit(buton_text, (buton_ok.x + (buton_ok.width - buton_text.get_width()) // 2,
                              buton_ok.y + (buton_ok.height - buton_text.get_height()) // 2))
+    
+    return buton_ok

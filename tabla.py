@@ -1,25 +1,24 @@
+import config
 from config import *
 import numpy as np
+import sys
 
 def startJoc():
     print("Start joc")
-    global pauza, tabla, meniuAfisat, popUpAfisat
-    pauza = False
-    meniuAfisat = False
-    popUpAfisat = False
+    config.pauza = False
+    config.meniuAfisat = False
+    config.popUpAfisat = False
 
 def startJocNou():
     print("Start joc nou")
-    global pauza, tabla, meniuAfisat, popUpAfisat
-    pauza = False
-    tabla = creareTabla()
-    meniuAfisat = False
-    popUpAfisat = False
+    config.pauza = False
+    config.tabla = creareTabla()
+    config.meniuAfisat = False
+    config.popUpAfisat = False
 
 def despreJoc():
     print("Despre joc")
-    global popUpAfisat
-    popUpAfisat = True
+    config.popUpAfisat = True
 
 def iesireJoc():
     pygame.quit()
@@ -36,7 +35,7 @@ def deseneazaTabla(tabla):
                 FUNDAL,
                 (
                     coloana * DIMENSIUNEBULINA,
-                    (rand + 2)* DIMENSIUNEBULINA + DIMENSIUNEBULINA,
+                    (rand + 1)* DIMENSIUNEBULINA + DIMENSIUNEBULINA,
                     DIMENSIUNEBULINA,
                     DIMENSIUNEBULINA,
                 ),
@@ -46,7 +45,7 @@ def deseneazaTabla(tabla):
                 FUNDALBULINE,
                 (
                     int(coloana * DIMENSIUNEBULINA + DIMENSIUNEBULINA / 2),
-                    int((rand +2) * DIMENSIUNEBULINA + DIMENSIUNEBULINA + DIMENSIUNEBULINA / 2),
+                    int((rand + 1) * DIMENSIUNEBULINA + DIMENSIUNEBULINA + DIMENSIUNEBULINA / 2),
                 ),
                 RAZA,
             )

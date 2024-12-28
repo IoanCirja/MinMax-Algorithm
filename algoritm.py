@@ -90,14 +90,10 @@ def showWinner(winner):
     pygame.display.flip()
     pygame.time.wait(3000)
     sys.exit()
-    return buton_ok
-
 
 
 def getValidMoves(tabla):
     return [c for c in range(COLOANE) if validLocatie(tabla, c)]
-
-
 
 def makeMove(tabla, row, col, piece):
     tabla[row][col] = piece

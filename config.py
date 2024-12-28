@@ -14,7 +14,7 @@ RAZA = int(DIMENSIUNEBULINA/2-10)
 DIMENSIUNEBUTON = 35
 
 width = COLOANE * DIMENSIUNEBULINA
-height = (RANDURI + 3) * DIMENSIUNEBULINA
+height = (RANDURI + 2) * DIMENSIUNEBULINA
 size = (width,height)
 
 screen = pygame.display.set_mode(size)

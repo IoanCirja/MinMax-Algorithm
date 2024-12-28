@@ -266,7 +266,7 @@ def main():
             butonOK = deseneaza_popup(despre)
         elif meniuAfisat:
             menu.draw(screen)
-            menu.flip(pygame.event.get())
+            menu.update(pygame.event.get())
         else:
             if not pauza:
                 deseneazaTabla(tabla)
