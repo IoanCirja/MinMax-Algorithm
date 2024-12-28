@@ -22,6 +22,7 @@ pygame.display.set_caption("Connect 4")
 screen.fill(FUNDALSPATE)
 
 tabla = None
-pauza =  False
+pauza =  True
 meniuAfisat = False
 popUpAfisat = False
+startAfisat = True

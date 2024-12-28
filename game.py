@@ -24,6 +24,7 @@ def main():
     turn = random.randint(0, 1)
     game_over = False
     menu = creeaza_meniu()
+    start = creeaza_meniu_start()
     player_ball_surface = pygame.Surface((width, DIMENSIUNEBULINA))
     player_ball_surface.set_colorkey((0, 0, 0))
     mouse_x = None
@@ -35,14 +36,18 @@ def main():
         pauza = config.pauza
         meniuAfisat = config.meniuAfisat
         popUpAfisat = config.popUpAfisat
+        startAfisat = config.startAfisat
         screen.fill(FUNDALSPATE)
         butonMeniu = deseneaza_buton_meniu()
-
+        
         if popUpAfisat:
             butonOK = deseneaza_popup(despre)
         elif meniuAfisat:
             menu.draw(screen)
             menu.update(pygame.event.get())
+        elif startAfisat:
+            start.draw(screen)
+            start.update(pygame.event.get())
         else:
             if not pauza:
                 deseneazaTabla(tabla)
@@ -68,11 +73,14 @@ def main():
                     config.meniuAfisat = True
                     pauza = True
                     config.pauza = True
-                if popUpAfisat and butonOK.collidepoint(pozitieMouse):
+                if not startAfisat and popUpAfisat and butonOK.collidepoint(pozitieMouse):
                     popUpAfisat = False
                     config.popUpAfisat = False
                     meniuAfisat =  True
                     config.meniuAfisat = True
+                elif  startAfisat and popUpAfisat and butonOK.collidepoint(pozitieMouse):
+                    popUpAfisat = False
+                    config.popUpAfisat = False
 
                 if turn == 0 and not pauza:
                     pygame.draw.rect(screen, FUNDALSPATE, (0, 0, width, DIMENSIUNEBULINA))

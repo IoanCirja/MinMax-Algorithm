@@ -89,7 +89,9 @@ def showWinner(winner):
     screen.blit(popup_surface, (popup_x, popup_y))
     pygame.display.flip()
     pygame.time.wait(3000)
-    sys.exit()
+    config.startAfisat = True
+    config.pauza = True
+    #sys.exit()
 
 
 def getValidMoves(tabla):

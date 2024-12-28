@@ -12,6 +12,14 @@ def creeaza_meniu():
     menu.add.button('Ieșire', iesireJoc)
     return menu
 
+def creeaza_meniu_start():
+    menu = pygame_menu.Menu('Connect 4', width, height,
+                            theme=pygame_menu.themes.THEME_DEFAULT)
+    menu.add.button('Start Joc', startJocNou)
+    menu.add.button('Despre', despreJoc)
+    menu.add.button('Ieșire', iesireJoc)
+    return menu
+
 def deseneaza_buton_meniu():
     buton_rect = pygame.Rect(0, 0, 100, DIMENSIUNEBUTON)
     pygame.draw.rect(screen, FUNDAL, buton_rect)

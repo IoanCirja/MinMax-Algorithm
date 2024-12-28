@@ -8,6 +8,7 @@ def startJoc():
     config.pauza = False
     config.meniuAfisat = False
     config.popUpAfisat = False
+    config.startAfisat = False
 
 def startJocNou():
     print("Start joc nou")
@@ -15,6 +16,7 @@ def startJocNou():
     config.tabla = creareTabla()
     config.meniuAfisat = False
     config.popUpAfisat = False
+    config.startAfisat = False
 
 def despreJoc():
     print("Despre joc")
