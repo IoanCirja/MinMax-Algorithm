@@ -10,14 +10,24 @@ def startJoc():
     config.popUpAfisat = False
     config.startAfisat = False
 
-def startJocNou():
+def alegereNumar():
+    config.pauza = True
+    config.alegereAfisat = True
+    config.niveluri = 3
+    config.meniuAfisat = False
+    config.popUpAfisat = False
+    config.startAfisat = False
+
+def startJocNou(nivel):
     print("Start joc nou")
     config.pauza = False
     config.tabla = creareTabla()
     config.meniuAfisat = False
     config.popUpAfisat = False
     config.startAfisat = False
-
+    config.alegereAfisat = False
+    config.levels = nivel
+    
 def despreJoc():
     print("Despre joc")
     config.popUpAfisat = True

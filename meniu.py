@@ -1,5 +1,6 @@
 import pygame
 import pygame_menu
+import pygame_menu.locals
 from config import *
 from tabla import *
 
@@ -7,7 +8,7 @@ def creeaza_meniu():
     menu = pygame_menu.Menu('Meniu principal', width, height,
                             theme=pygame_menu.themes.THEME_DEFAULT)
     menu.add.button('Revenire', startJoc)
-    menu.add.button('Joc Nou', startJocNou)
+    menu.add.button('Joc Nou', alegereNumar)
     menu.add.button('Despre', despreJoc)
     menu.add.button('Ieșire', iesireJoc)
     return menu
@@ -15,9 +16,22 @@ def creeaza_meniu():
 def creeaza_meniu_start():
     menu = pygame_menu.Menu('Connect 4', width, height,
                             theme=pygame_menu.themes.THEME_DEFAULT)
-    menu.add.button('Start Joc', startJocNou)
+    menu.add.button('Start Joc', alegereNumar)
     menu.add.button('Despre', despreJoc)
     menu.add.button('Ieșire', iesireJoc)
+    return menu
+
+def creeaza_pagina_niveluri():
+    menu = pygame_menu.Menu('Niveluri', width, height,
+                            theme=pygame_menu.themes.THEME_DEFAULT)
+    text = "Alegeti numar de nivele\npe care se face cautarea"
+    for line in text.split("\\n"):
+        menu.add.label(line, align = pygame_menu.locals.ALIGN_CENTER)
+
+    nivele = [1,2,3,4,5,6]
+    for nivel in nivele:
+        menu.add.button(nivel, startJocNou, nivel)
+
     return menu
 
 def deseneaza_buton_meniu():

@@ -21,8 +21,11 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Connect 4")
 screen.fill(FUNDALSPATE)
 
+levels = 3
 tabla = None
 pauza =  True
 meniuAfisat = False
 popUpAfisat = False
 startAfisat = True
+alegereAfisat = False
+gameOver = False

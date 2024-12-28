@@ -22,9 +22,9 @@ def main():
               "si Cirja Ioan.")
     
     turn = random.randint(0, 1)
-    game_over = False
     menu = creeaza_meniu()
     start = creeaza_meniu_start()
+    level = creeaza_pagina_niveluri()
     player_ball_surface = pygame.Surface((width, DIMENSIUNEBULINA))
     player_ball_surface.set_colorkey((0, 0, 0))
     mouse_x = None
@@ -32,14 +32,19 @@ def main():
     meniuAfisat = config.meniuAfisat
     popUpAfisat = config.popUpAfisat
     while True:
+        gameOver = config.gameOver
         tabla = config.tabla
         pauza = config.pauza
         meniuAfisat = config.meniuAfisat
         popUpAfisat = config.popUpAfisat
         startAfisat = config.startAfisat
+        alegereAfisat = config.alegereAfisat
         screen.fill(FUNDALSPATE)
         butonMeniu = deseneaza_buton_meniu()
         
+        if alegereAfisat:
+            level.draw(screen)
+            level.update(pygame.event.get())
         if popUpAfisat:
             butonOK = deseneaza_popup(despre)
         elif meniuAfisat:
@@ -93,10 +98,10 @@ def main():
                         turn = 1
                         deseneazaTabla(tabla)
                         if checkWin(tabla, 1):
-                            game_over = True
+                            gameOver = True
                             showWinner(1)            
 
-            if turn == 1 and not game_over and not pauza:
+            if turn == 1 and not gameOver and not pauza:
                 pygame.time.wait(500)
                 coloana = aiMove(tabla)
                 rand = urmRandLiber(tabla, coloana)
@@ -104,7 +109,7 @@ def main():
                 turn = 0
                 deseneazaTabla(tabla)
                 if checkWin(tabla, 2):
-                    game_over = True
+                    gameOver = True
                     showWinner(2)
 
         pygame.display.flip()

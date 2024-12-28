@@ -91,8 +91,7 @@ def showWinner(winner):
     pygame.time.wait(3000)
     config.startAfisat = True
     config.pauza = True
-    #sys.exit()
-
+    config.gameOver = False
 
 def getValidMoves(tabla):
     return [c for c in range(COLOANE) if validLocatie(tabla, c)]
@@ -135,7 +134,7 @@ def undoMove(tabla, row, col):
 
 #     return 0
 
-def aiMove(tabla, depth=4):
+def aiMove(tabla):
     best_score = -math.inf
     best_moves = []
 
@@ -148,11 +147,10 @@ def aiMove(tabla, depth=4):
             undoMove(tabla, row, move)
             return move
         undoMove(tabla, row, move)
-
     for move in valid_moves:
         row = urmRandLiber(tabla, move)
         makeMove(tabla, row, move, 2)
-        score = minimax(tabla, depth, -math.inf, math.inf, False, 2)
+        score = minimax(tabla, 0, -math.inf, math.inf, True, 2)
         undoMove(tabla, row, move)
 
         if score > best_score:
@@ -174,7 +172,7 @@ def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
     if checkWin(tabla, opponent_piece):
         return float('-inf') if is_maximizing else float('inf')
 
-    if depth == 0 or not valid_moves:
+    if depth == config.levels or not valid_moves:
         return evaluate(tabla, piece)
 
     if is_maximizing:
@@ -182,7 +180,7 @@ def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
         for move in valid_moves:
             row = urmRandLiber(tabla, move)
             makeMove(tabla, row, move, piece)
-            eval = minimax(tabla, depth - 1, alpha, beta, False, piece)
+            eval = minimax(tabla, depth + 1, alpha, beta, False, piece)
             undoMove(tabla, row, move)
             max_eval = max(max_eval, eval)
             alpha = max(alpha, eval)
@@ -194,7 +192,7 @@ def minimax(tabla, depth, alpha, beta, is_maximizing, piece):
         for move in valid_moves:
             row = urmRandLiber(tabla, move)
             makeMove(tabla, row, move, opponent_piece)
-            eval = minimax(tabla, depth - 1, alpha, beta, True, piece)
+            eval = minimax(tabla, depth + 1, alpha, beta, True, piece)
             undoMove(tabla, row, move)
             min_eval = min(min_eval, eval)
             beta = min(beta, eval)
